@@ -35,6 +35,7 @@ for (const browser of ['chrome', 'firefox']) {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.chrome.json')));
   if (browser === 'firefox') {
     delete manifest.minimum_chrome_version;
+    manifest.background = {scripts: ['src/background.js']};
     manifest.browser_specific_settings = {gecko: {id: 'youtube-buttons@brandyn', strict_min_version: '142.0', data_collection_permissions: {required: ['none']}}};
   }
   fs.writeFileSync(path.join(dir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
