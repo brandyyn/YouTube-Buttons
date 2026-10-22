@@ -1,0 +1,16 @@
+{
+  "name": "youtube-buttons",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Build and test tools only; extension runtime has no dependencies.",
+  "scripts": {
+    "build": "node build.cjs",
+    "test": "node tests/browser.cjs",
+    "test:performance": "node tests/performance.cjs",
+    "test:memory": "node tests/memory-retention.cjs --retention-only"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  },
+  "license": "MIT"
+}

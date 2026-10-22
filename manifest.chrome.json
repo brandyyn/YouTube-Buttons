@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "YouTube Buttons",
+  "version": "1.0.0",
+  "description": "Playback speed, frame screenshots, audio compression and equalizer in one lightweight YouTube toolbar.",
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_title": "YouTube Buttons",
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "icons/16.png",
+      "32": "icons/32.png",
+      "48": "icons/48.png",
+      "128": "icons/128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/16.png",
+    "32": "icons/32.png",
+    "48": "icons/48.png",
+    "128": "icons/128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.youtube.com/*",
+        "https://www.youtube-nocookie.com/embed/*"
+      ],
+      "js": [
+        "src/settings.js",
+        "src/content.js"
+      ],
+      "css": [
+        "src/content.css"
+      ],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+  "minimum_chrome_version": "120"
+}

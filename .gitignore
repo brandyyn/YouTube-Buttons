@@ -1,0 +1,8 @@
+node_modules/
+test-results/
+*.zip
+.DS_Store
+Thumbs.db
+/preview-*.png
+/test-run.log
+/commit-message.txt

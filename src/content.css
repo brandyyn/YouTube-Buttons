@@ -1,0 +1,85 @@
+.yb-controls { display: inline-flex; align-items: center; height: 100%; vertical-align: top; gap: 0; }
+/* Native YouTube SVG padding must not enlarge these independent icons. */
+.html5-video-player .yb-controls button.yb-button { position: relative; box-sizing: border-box; width: 36px; min-width: 0; height: 32px; flex: 0 0 auto; align-self: center; padding: 0; display: inline-flex; align-items: center; justify-content: center; color: inherit; font-family: Roboto, Arial, sans-serif; line-height: 1; border: 0; background: transparent; cursor: pointer; }
+.html5-video-player .yb-controls button.yb-button > svg { box-sizing: border-box; width: 28px; height: 28px; padding: 0; margin: 0; flex: 0 0 auto; display: block; pointer-events: none; fill: #fff; stroke: none; }
+.html5-video-player .yb-controls button.yb-screenshot > svg { width: 24px; height: 24px; }
+.html5-video-player .yb-controls button.yb-speed { width: auto; padding: 0 4px; margin: 0 2px; font: 400 11.5px/1 Roboto, Arial, sans-serif; }
+
+.ad-showing .yb-slower, .ad-showing .yb-speed, .ad-showing .yb-faster { display: none; }
+.yb-controls .yb-button:focus-visible { outline: 2px solid currentColor; outline-offset: -4px; }
+.yb-controls .yb-button:disabled { opacity: .45; cursor: wait; }
+.yb-notice { position: absolute; z-index: 70; bottom: 65px; left: 50%; transform: translateX(-50%); padding: 10px 16px; border-radius: 8px; color: white; background: #161616ed; font: 14px/1.4 sans-serif; max-width: 80%; pointer-events: none; }
+@media (forced-colors: active) { .yb-controls .yb-button[aria-pressed="true"] { color: Highlight; } }
+
+.html5-video-player .yb-controls[data-style="new"] button.yb-button > svg { width:23px; height:23px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+
+
+/* Keep native hover paint inside our actual hit targets, not YouTube's 48px default. */
+.html5-video-player .yb-controls { gap: 2px; }
+.html5-video-player .yb-controls button.yb-button:not(.yb-speed) { width: 32px; height: 32px; }
+.html5-video-player .yb-controls button.yb-screenshot { width: 28px; height: 28px; }
+.html5-video-player .yb-controls[data-style="new"] button.yb-button:not(.yb-speed) { width: 27px; height: 27px; }
+.html5-video-player .yb-controls button.yb-button::before { box-sizing: border-box; width: 100% !important; height: 100% !important; inset: 0 !important; padding: 0; margin: 0; transform: none !important; border-radius: 6px; pointer-events: none; }
+
+/* Keep every icon on the button's flex centre line, independent of native
+   large-player SVG baseline/position rules. Do not offset individual icons. */
+.html5-video-player .yb-controls { line-height: normal; align-items: center; }
+.html5-video-player .yb-controls button.yb-button { top: auto; bottom: auto; margin-top: 0; margin-bottom: 0; transform: none; align-items: center; justify-content: center; }
+.html5-video-player .yb-controls button.yb-button > svg { position: static !important; inset: auto !important; transform: none !important; vertical-align: middle !important; align-self: center; }
+
+/* Active colour is applied directly to the icon; retain native button shadows. */
+/* A toggle is a single state change: never tween the path/fill/opacity through
+   native player animation rules. The independent hover background may still fade. */
+.html5-video-player .yb-controls button.yb-compressor,
+.html5-video-player .yb-controls button.yb-compressor > svg,
+.html5-video-player .yb-controls button.yb-compressor > svg > * { transition: none !important; animation: none !important; }
+.html5-video-player .yb-controls button.yb-compressor > svg { fill: currentColor; }
+.html5-video-player .yb-controls[data-style="new"] button.yb-compressor > svg { fill: none; }
+.html5-video-player .yb-controls button.yb-compressor[aria-pressed="true"] > svg { color: var(--yb-compression-color, #ff0000); }
+.html5-video-player .yb-controls[data-compression-mode="inverted"] button.yb-compressor:not([aria-pressed="true"]) > svg { color: #333333; }
+.html5-video-player .yb-controls button.yb-speed { padding: 0 2px; margin: 0; }
+/* Compensate the numeral font's larger leading side-bearing beside minus. */
+.html5-video-player .yb-controls .yb-slower + .yb-speed { padding-left:1px; }
+.html5-video-player .yb-controls[data-style="new"] button.yb-speed { height: 27px; }
+.html5-video-player .yb-controls .yb-slower + .yb-speed,
+.html5-video-player .yb-controls .yb-speed + .yb-faster { margin-left: -2px; }
+/* Optical correction for the font's numeral baseline, without shifting hit areas. */
+.yb-speed-value { display: block; font: inherit; line-height: 1; transform: none; text-shadow:0 0 2px rgba(0,0,0,.5); }
+.html5-video-player .yb-controls button.yb-button::before { content: ""; position: absolute; background: transparent; border-radius: 40px; }
+.html5-video-player .yb-controls button.yb-button:hover::before,
+.html5-video-player .yb-controls button.yb-button:focus-visible::before { background: rgba(255,255,255,.1); }
+/* Let native tooltip classes choose appearance for YouTube's current UI variant. */
+.html5-video-player .yb-tooltip { position: absolute; z-index: 80; top: auto !important; transform: none !important; pointer-events: none; white-space: nowrap; }
+.html5-video-player .yb-tooltip:not([hidden]) { display: block; }
+.html5-video-player .yb-tooltip[hidden] { display: none; }
+.html5-video-player .yb-tooltip .ytp-tooltip-keyboard-shortcut[hidden] { display: none !important; }
+.html5-video-player.yb-hide-autoplay .ytp-autonav-toggle,
+.html5-video-player.yb-hide-autoplay button:has(.ytp-autonav-toggle-button) { display:none !important; }
+/* Keep icon sizes and vertical positions native; shrink only horizontal slots. */
+.html5-video-player.yb-compact-buttons .ytp-right-controls,
+.html5-video-player.yb-compact-buttons .ytp-right-controls-left,
+.html5-video-player.yb-compact-buttons .ytp-right-controls-right { gap:0 !important; column-gap:0 !important; padding-left:0 !important; padding-right:0 !important; }
+.html5-video-player.yb-compact-buttons .ytp-right-controls .ytp-button:not(.yb-button) { width:32px !important; min-width:0 !important; margin-left:0 !important; margin-right:0 !important; padding-left:0 !important; padding-right:0 !important; }
+.html5-video-player.yb-compact-buttons .ytp-right-controls .ytp-button:not(.yb-button)::before { box-sizing:border-box !important; width:100% !important; max-width:100% !important; height:32px !important; padding:0 !important; margin:0 !important; left:0 !important; right:0 !important; top:50% !important; bottom:auto !important; transform:translateY(-50%) !important; }
+/* Native modern SVGs keep a 48px padded canvas even inside narrower buttons.
+   Preserve their 24px artwork by reducing canvas + horizontal padding together. */
+.html5-video-player.ytp-delhi-modern.yb-compact-buttons .ytp-right-controls .ytp-button:not(.yb-button) > svg,
+.html5-video-player.ytp-delhi-modern.yb-compact-buttons .ytp-right-controls .ytp-subtitles-button-icon > svg { box-sizing:border-box !important; width:32px !important; height:100% !important; padding-left:4px !important; padding-right:4px !important; }
+.html5-video-player.ytp-delhi-modern.yb-compact-buttons .ytp-subtitles-button-icon { width:100% !important; height:100% !important; }
+/* Inline vectors avoid resampling the compact autoplay artwork as a mask. */
+.yb-autoplay-icon { display:none; }
+.html5-video-player.yb-compact-buttons .ytp-right-controls .ytp-button:has(.ytp-autonav-toggle-button) { position:relative !important; height:100% !important; align-self:center !important; vertical-align:top !important; }
+.html5-video-player.yb-compact-buttons .ytp-autonav-toggle-button-container { position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; margin:0 !important; padding:0 !important; display:flex !important; align-items:center !important; justify-content:center !important; transform:none !important; background:transparent !important; filter:none !important; }
+.html5-video-player.yb-compact-buttons .ytp-autonav-toggle-button { position:relative !important; inset:auto !important; flex:none !important; width:28px !important; height:28px !important; margin:0 !important; padding:0 !important; background:transparent !important; transform:none !important; transition:none !important; filter:none !important; }
+.html5-video-player.yb-compact-buttons .ytp-autonav-toggle-button:has(> .yb-autoplay-icon)::before,
+.html5-video-player.yb-compact-buttons .ytp-autonav-toggle-button:has(> .yb-autoplay-icon)::after { display:none !important; }
+.html5-video-player.yb-compact-buttons .ytp-autonav-toggle-button > svg.yb-autoplay-icon { display:block !important; position:static !important; width:28px !important; height:28px !important; margin:0 !important; padding:0 !important; overflow:visible; pointer-events:none; transform:translateY(1px) !important; fill:none; stroke:none; filter:drop-shadow(0 0 2px rgba(0,0,0,.5)); }
+.yb-autoplay-icon .yb-autoplay-play { display:none; }
+[aria-checked="true"] > .yb-autoplay-icon .yb-autoplay-pause { display:none; }
+[aria-checked="true"] > .yb-autoplay-icon .yb-autoplay-play { display:block; }
+/* Move compact fullscreen's icon and hit target together. */
+.html5-video-player.yb-compact-buttons .ytp-right-controls .ytp-fullscreen-button { position:relative; left:-2px; }
+
+.html5-video-player.yb-compact-buttons:has(.yb-controls[data-style="new"]) .ytp-autonav-toggle-button,
+.html5-video-player.yb-compact-buttons:has(.yb-controls[data-style="new"]) .ytp-autonav-toggle-button > svg.yb-autoplay-icon { width:23px !important; height:23px !important; }
+.html5-video-player.yb-compact-buttons:has(.yb-controls[data-style="new"]) .yb-autoplay-icon circle { stroke-width:1.8; }
