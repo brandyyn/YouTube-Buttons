@@ -5,6 +5,7 @@
   const keys = ['settings', 'lastSpeed', 'compressionWanted'];
   const alarmName = 'save-preferences';
   const incoming = new Map();
+  let localChanges = {}, localQueued = false;
   let queue = Promise.resolve();
   const enqueue = task => { queue = queue.then(task); };
   const equal = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -41,16 +42,28 @@
         if (incoming.get(key) === JSON.stringify(change.newValue)) { incoming.delete(key); continue; }
         if (change.newValue !== undefined) patch[key] = change.newValue;
       }
-      if (Object.keys(patch).length) enqueue(async () => {
-        const {syncPending = {}} = await api.storage.local.get('syncPending');
-        await api.storage.local.set({syncPending: {...syncPending, ...patch}});
-        await schedule();
-      });
+      if (Object.keys(patch).length) {
+        Object.assign(localChanges, patch);
+        if (!localQueued) {
+          localQueued = true;
+          enqueue(async () => {
+            // Retain one in-flight snapshot and only the newest pending values,
+            // rather than a promise/closure for every slider input event.
+            while (Object.keys(localChanges).length) {
+              const latest = localChanges; localChanges = {};
+              const {syncPending = {}} = await api.storage.local.get('syncPending');
+              await api.storage.local.set({syncPending: {...syncPending, ...latest}});
+            }
+            localQueued = false;
+            await schedule();
+          });
+        }
+      }
     } else if (area === 'sync') enqueue(async () => {
       const {syncPending = {}} = await api.storage.local.get('syncPending');
       const values = {};
       for (const key of keys) if (changes[key]) values[key] = changes[key].newValue;
-      await applyRemote(values, syncPending);
+      await applyRemote(values, {...syncPending, ...localChanges});
     });
   });
   api.alarms.onAlarm.addListener(alarm => { if (alarm.name === alarmName) enqueue(flush); });

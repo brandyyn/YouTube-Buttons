@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "YouTube Buttons",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Playback speed, frame screenshots, audio compression and equalizer in one lightweight YouTube toolbar.",
   "permissions": [
     "storage",
