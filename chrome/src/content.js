@@ -484,11 +484,11 @@
     const svg = document.createElementNS(ns, 'svg'); svg.classList.add('yb-autoplay-icon');
     svg.setAttribute('viewBox', '0 0 24 24'); svg.setAttribute('aria-hidden', 'true');
     const circle = document.createElementNS(ns, 'circle');
-    for (const [key,value] of Object.entries({cx:12,cy:12,r:9,fill:'none',stroke:'currentColor','stroke-width':2})) circle.setAttribute(key,String(value));
+    for (const [key,value] of Object.entries({cx:12,cy:12,r:9,fill:'none',stroke:'currentColor','stroke-width':2.2})) circle.setAttribute(key,String(value));
     svg.append(circle);
-    for (const [name,d] of [['pause','M5.5 12h2V5h-2zm4-7v7h2V5z'],['play','M12 8.5 6.5 12V5z']]) {
+    for (const [name,d] of [['pause','M8.5 8h2.5v8H8.5zm4.5 0h2.5v8H13z'],['play','M9 7.5 16.5 12 9 16.5z']]) {
       const path = document.createElementNS(ns, 'path'); path.classList.add('yb-autoplay-'+name);
-      path.setAttribute('d', d); path.setAttribute('fill','currentColor'); path.setAttribute('transform','translate(.1 .1) scale(1.4)'); svg.append(path);
+      path.setAttribute('d', d); path.setAttribute('fill','currentColor'); svg.append(path);
     }
     autoplayIcon = svg; autoplayControl.append(svg);
   }

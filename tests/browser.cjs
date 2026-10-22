@@ -291,8 +291,9 @@ async function run(engine) {
   await popup.waitForFunction(()=>testStore.settings.step===0.25);
   check(prefix+'inline multiplier setting persists',await popup.locator('[data-group="acceleration"] summary').textContent(),'0.25×');
   await page.evaluate(()=>{window.styleSpeedNode=document.querySelector('.yb-speed');window.styleSpeedText=styleSpeedNode.textContent;});
-  await popup.locator('#extra-options').evaluate(e=>e.open=true);await popup.locator('#button-style').selectOption('new');
+  await popup.evaluate(style=>chrome.storage.local.set({settings:{...testStore.settings,style}}),'new');
   await popup.waitForFunction(()=>testStore.settings.style==='new');
+  check(prefix+'button style option removed',await popup.locator('#button-style').count(),0);
   await page.evaluate(config=>chrome.storage.local.set({settings:config}),await popup.evaluate(()=>testStore.settings));
   await page.waitForFunction(()=>document.querySelector('.yb-controls').dataset.style==='new');
   check(prefix+'new icons apply immediately',await page.locator('.yb-slower svg').evaluate(e=>e.getBoundingClientRect().width),23);
@@ -304,7 +305,7 @@ async function run(engine) {
   await page.locator('.yb-compressor').click();await page.waitForFunction(()=>document.querySelector('.yb-compressor').getAttribute('aria-pressed')==='false');
   check(prefix+'new off artwork centred on hover paint',await paintedCentresMatchHighlights(page),true);
   await page.locator('.yb-compressor').click();await page.waitForFunction(()=>document.querySelector('.yb-compressor').getAttribute('aria-pressed')==='true');
-  await popup.locator('#extra-options').evaluate(e=>e.open=true);await popup.locator('#button-style').selectOption('original');
+  await popup.evaluate(style=>chrome.storage.local.set({settings:{...testStore.settings,style}}),'original');
   await popup.waitForFunction(()=>testStore.settings.style==='original');
   await page.evaluate(config=>chrome.storage.local.set({settings:config}),await popup.evaluate(()=>testStore.settings));
   await page.waitForFunction(()=>document.querySelector('.yb-controls').dataset.style==='original');
@@ -478,7 +479,7 @@ async function run(engine) {
   check(prefix+'unhide restores native autoplay button',await page.locator('.ytp-autonav-toggle').isVisible(),true);
   await page.locator('.ytp-autonav-toggle').evaluate(button=>{button.style.width='48px';button.style.padding='0 8px';});
   await popup.locator('#extra-options').evaluate(e=>e.open=true);
-  check(prefix+'extra options labels and order',await popup.locator('.extra-options-panel label > span').allTextContents(),['Hide Autoplay','Enable Autoplay','Compact Buttons','Button Style']);
+  check(prefix+'extra options labels and order',await popup.locator('.extra-options-panel label > span').allTextContents(),['Hide Autoplay','Enable Autoplay','Compact Buttons']);
   check(prefix+'menu trigger has no box',await popup.locator('#extra-options > summary').evaluate(e=>{const s=getComputedStyle(e);return[s.borderTopWidth,s.backgroundColor];}),['0px','rgba(0, 0, 0, 0)']);
   check(prefix+'dropdown rows are compact',await popup.locator('.extra-options-panel label').evaluateAll(rows=>rows.every(e=>e.getBoundingClientRect().height<=25)),true);
   check(prefix+'dropdown fields share right edge',await popup.locator('.extra-options-panel label').evaluateAll(rows=>{const edges=rows.map(e=>e.lastElementChild.getBoundingClientRect().right);return Math.max(...edges)-Math.min(...edges)<.1;}),true);
@@ -493,8 +494,8 @@ async function run(engine) {
   check(prefix+'compact fullscreen moves complete button two pixels toward settings',await page.evaluate(()=>{const b=document.createElement('button');b.className='ytp-button ytp-fullscreen-button';document.querySelector('.ytp-right-controls').append(b);const style=getComputedStyle(b),result=[style.position,style.left];b.remove();return result;}),['relative','-2px']);
   check(prefix+'compact native slot removes padding',await page.locator('.ytp-autonav-toggle').evaluate(e=>[e.getBoundingClientRect().width,getComputedStyle(e).paddingLeft]),[32,'0px']);
   await page.locator('.yb-autoplay-icon').waitFor();
-  check(prefix+'compact autoplay uses a full-size inline vector',await page.locator('.yb-autoplay-icon').evaluate(svg=>{const r=svg.getBoundingClientRect(),c=svg.querySelector('circle');return[r.width,r.height,c.r.baseVal.value,c.getAttribute('stroke-width')];}),[28,28,9,'2']);
-  check(prefix+'compact autoplay keeps requested one pixel optical offset',await page.locator('.yb-autoplay-icon').evaluate(svg=>{const a=svg.getBoundingClientRect(),b=svg.closest('button').getBoundingClientRect();return[Math.abs(a.x+a.width/2-b.x-b.width/2)<.01,Math.abs(a.y+a.height/2-b.y-b.height/2-1)<.01];}),[true,true]);
+  check(prefix+'compact autoplay uses a full-size inline vector',await page.locator('.yb-autoplay-icon').evaluate(svg=>{const r=svg.getBoundingClientRect(),c=svg.querySelector('circle');return[r.width,r.height,c.r.baseVal.value,c.getAttribute('stroke-width')];}),[28,28,9,'2.2']);
+  check(prefix+'compact autoplay aligns vertically with the row',await page.locator('.yb-autoplay-icon').evaluate(svg=>{const a=svg.getBoundingClientRect(),b=svg.closest('button').getBoundingClientRect();return[Math.abs(a.x+a.width/2-b.x-b.width/2)<.01,Math.abs(a.y+a.height/2-b.y-b.height/2)<.01];}),[true,true]);
   await page.locator('.ytp-autonav-toggle').click();
   check(prefix+'native autoplay updates inline glyph without replacement',await page.locator('.yb-autoplay-icon').evaluate(svg=>getComputedStyle(svg.querySelector('.yb-autoplay-play')).display==='block'&&getComputedStyle(svg.querySelector('.yb-autoplay-pause')).display==='none'),true);
   await page.locator('.ytp-autonav-toggle').click();
@@ -507,7 +508,8 @@ async function run(engine) {
   check(prefix+'native child replacement repairs one vector',await page.locator('.yb-autoplay-icon').count(),1);
   check(prefix+'autoplay follows row height rather than native oversized height',await page.locator('.ytp-autonav-toggle').evaluate(e=>Math.abs(e.getBoundingClientRect().height-e.closest('.ytp-right-controls').getBoundingClientRect().height)<.01),true);
   await page.evaluate(()=>chrome.storage.local.set({settings:{...testStore.settings,style:'new'}}));
-  check(prefix+'new autoplay and speed icons share canvas and outline weight',await page.evaluate(()=>{const a=document.querySelector('.yb-autoplay-icon'),b=document.querySelector('.yb-slower svg');return a.getBoundingClientRect().width===b.getBoundingClientRect().width&&getComputedStyle(a.querySelector('circle')).strokeWidth===getComputedStyle(b.querySelector('circle')).strokeWidth;}),true);
+  check(prefix+'autoplay retains canvas size with heavier ring and filled symbol',await page.evaluate(()=>{const a=document.querySelector('.yb-autoplay-icon'),b=document.querySelector('.yb-slower svg');return a.getBoundingClientRect().width===b.getBoundingClientRect().width&&getComputedStyle(a.querySelector('circle')).strokeWidth==='2px'&&a.querySelector('.yb-autoplay-play').getAttribute('fill')==='currentColor';}),true);
+  check(prefix+'compact native hover matches extension hover size and stays centred',await page.locator('.ytp-autonav-toggle').evaluate(button=>{const s=getComputedStyle(button,'::before');return[s.width,s.height,s.left,s.top,s.borderRadius,s.transform];}),['27px','27px','16px','22px','50%','matrix(1, 0, 0, 1, -13.5, -13.5)']);
   await page.evaluate(()=>chrome.storage.local.set({settings:{...testStore.settings,style:'original'}}));
 
   check(prefix+'native padded SVG retains 24px artwork without overlap',await page.locator('.native-spacing-fixture').evaluate(button=>{const svg=button.firstElementChild,r=svg.getBoundingClientRect(),b=button.getBoundingClientRect(),s=getComputedStyle(svg);return[r.width,r.height,r.width-parseFloat(s.paddingLeft)-parseFloat(s.paddingRight),r.height-parseFloat(s.paddingTop)-parseFloat(s.paddingBottom),Math.abs(r.x+r.width/2-b.x-b.width/2)<.01];}),[32,40,24,24,true]);

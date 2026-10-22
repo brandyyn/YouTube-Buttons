@@ -230,10 +230,8 @@
     try {const state=await api.tabs.sendMessage(autoplayTab,{type:'yb-autoplay-set',enabled:toggle.checked},{frameId:0});if(!state?.available)throw new Error('Unavailable');toggle.checked=state.enabled;toggle.disabled=false;}
     catch {void loadAutoplay();}
   });
-  const style = document.querySelector('#button-style');
-  style.addEventListener('change', () => {settings.style = style.value; save();});
   read().then(value => {
-    settings = value; style.value = settings.style;
+    settings = value;
     const compact=document.querySelector('#compact-buttons');compact.checked=settings.compactButtons;
     compact.addEventListener('change',()=>{settings.compactButtons=compact.checked;save();});
     const hide=document.querySelector('#autoplay-hide');hide.checked=settings.hideAutoplay;
